@@ -16,18 +16,6 @@ Esta configuración está diseñada para un teclado dividido tipo Corne, optimiz
 
 ---
 
-## 📝 Descripción general
-
-Esta configuración está diseñada para un teclado dividido tipo Corne, optimizada para programación, navegación y productividad. Utiliza múltiples capas con combinaciones inteligentes de teclas, permitiendo funciones avanzadas sin perder velocidad al escribir.
-
-### 🔧 Tecnologías usadas
-
-- [QMK Firmware](https://qmk.fm)
-- C macros para teclas personalizadas
-- Mapeo visual en capas (layers)
-- Teclas "inteligentes" que reaccionan diferente si se presionan o mantienen
-
----
 
 ## 🧩 Leyenda de símbolos
 
