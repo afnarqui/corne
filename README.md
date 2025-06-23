@@ -16,48 +16,93 @@ Esta configuración está diseñada para un teclado dividido tipo Corne, optimiz
 
 ---
 
-## 🎹 Capas del teclado
+## 📝 Descripción general
 
-### Capa 0 – Escritura principal
+Esta configuración está diseñada para un teclado dividido tipo Corne, optimizada para programación, navegación y productividad. Utiliza múltiples capas con combinaciones inteligentes de teclas, permitiendo funciones avanzadas sin perder velocidad al escribir.
 
-- Teclas comunes (`QWERTY` modificado)
-- Teclas SMART (`Ctrl + tecla` si se mantiene)
-- Accesos rápidos a funciones frecuentes (`Tab`, `Borrar`, `Espacio`, etc.)
+### 🔧 Tecnologías usadas
 
-### Capa 1 – Navegación y funciones
+- [QMK Firmware](https://qmk.fm)
+- C macros para teclas personalizadas
+- Mapeo visual en capas (layers)
+- Teclas "inteligentes" que reaccionan diferente si se presionan o mantienen
 
-- Números, funciones (`F1` a `F12`)
-- Movimiento de cursor (flechas, `PgUp`, `PgDn`, `End`)
-- Alternador de ventanas (`Alt + Tab`)
+---
 
-### Capa 2 – Símbolos y signos especiales
+## 🧩 Leyenda de símbolos
 
-- Paréntesis, corchetes, llaves
-- Operadores (`+`, `-`, `*`, `/`, `=`)
-- Combinaciones con `Shift` (flechas seleccionando texto)
+| Símbolo | Significado     |
+|---------|------------------|
+| ⌃       | Ctrl             |
+| ⇧       | Shift            |
+| ⌥       | Alt              |
+| ⌘       | GUI (Windows/Command) |
+| ⌫       | Backspace        |
+| ⏎       | Enter            |
+| MENU    | KC_APP (Menú contextual) |
+| WSCH    | KC_WSCH (Buscar) |
+| MO(x)   | Cambiar temporalmente a capa x |
+| LT(x, Y)| Mantener = capa x, tocar = tecla Y |
 
-### Capa 3 – Configuración del teclado
+---
 
-- Reset del firmware (`QK_BOOT`)
-- Control de RGB (`hue`, `saturación`, `valor`)
-- Atajos internos
+## 🎹 Capa 0 – Escritura principal (teclas inteligentes)
+```
+ Q    W    F    P    B    M        Y    L    H    ESC  CAPS  ⌫
+⌃⇧R  ⌃S    T   ⌃N   ⌃C   ⌃D       ⌃A   ⌃E    I     O     U    ⌥
+ Z   ⌃X    G   ⌃V   ⌃J   ⇧K       ⇧     ⌃WSCH TAB   ⌥     ⌘   MENU
 
-### Capa 4 – Control de mouse y entrada de ñ
+           [MO(2)] [MO(1)]     SPACE    ⏎    [MO(1)] [MO(2)]
+```
 
-- Movimiento del mouse (`KC_MS_U`, `KC_MS_D`, etc.)
-- Clicks y scroll
-- Entrada directa de la letra ñ incluso en teclado inglés
+## 🧭 Capa 1 – Navegación y funciones
+```
+ALT+TAB   1    2    3    4    5       ⌥    PgUp   ↑   PgDn   ⛔     ⌫
+ALT+TAB   P6   P7   P8   P9   P0      End   ←    ↓    →    ⌃⇧    ⌃
+ F1    F2   F3   F4   F5   F6         F7    F8    F9    F10   F11   F12
 
-### Capa 5 – Navegación avanzada y símbolos extendidos
+           ⌘     [MO(1)]     SPACE    ⏎    [MO(1)]   ⌥
+```
 
-- Accesos directos a pestañas de navegador
-- Símbolos complejos como `|`, `&`, `^`, `%`, `~`, etc.
+## 🔣 Capa 2 – Símbolos y signos especiales
+```
+ TAB    +    -    *    /    =       ⛔    ⛔   ⇧↑    ⛔    ⛔     ⌫
+PRTSC  `    \   _    @     "        ⛔   ⇧←   ⇧↓   ⇧→     /     ⌃
+ ^     |    ;    ,    .    ⛔        ⛔    ⛔    ⛔    ⛔     ⛔     ⛔
+
+          [MO(3)] [MO(2)]   SPACE    ⏎    [MO(3)]   ⌥
+```
+
+## 🌈 Capa 3 – Configuración RGB
+```
+ QK_BOOT ⛔   ⛔   ⛔   ⛔   ⛔       ⛔     ⛔    ⛔    ⛔    ⛔    ⛔
+RGB TOG  HUE+ SAT+ VAL+ ⛔   ⛔       ⛔     ⛔    ⛔    ⛔    ⛔    ⛔
+RGB NEXT HUE- SAT- VAL- ⛔   ⛔       ⛔     ⛔    ⛔    ⛔    ⛔    ⛔
+
+           ⌘     ⌥         SPACE    ⏎    ⌥        ⌘
+```
+
+## 🖱️ Capa 4 – Mouse y ñ
+```
+ ⛔   ⛔   ⛔   ⛔   ⛔   ⛔        ⛔   WH_L  MS↑   WH_R  ⛔   ACL0
+ ⛔   ⛔   ⛔   ñ    ⛔   ⛔        ⛔   MS←  MS↓   MS→   ⛔   ACL1
+ ⛔   ⛔   ⛔   ⛔   ⛔   ⛔        ⛔   WH↑   MBtn3 WH↓   ⛔   ACL2
+
+           ⛔   MBtn1      ⛔       MBtn1   MBtn2   ⛔
+```
+
+## 🧼 Capa 5 – Símbolos extendidos y navegación avanzada
+```
+ {     }     [     ]     (     )      <     >     |     ⛔     ⛔     ⛔
+ /    :     !     "     ,     .      ⌃Tab ⌃⇧Tab  ⌥↑    ⌥↓    ⌃P    ⌃
+ ⛔    ?     #     $     %     ⛔      &     *     =     -     `     ⛔
+
+          ⌘     ⌥         ⌘         ⌥        ⌘       ⌥
+```
 
 ---
 
 ## 🧠 Teclas inteligentes (SMART KEYS)
-
-Estas teclas detectan si las presionas rápido (tap) o si las mantienes (hold). Ejecutan una acción distinta según el caso:
 
 | Tecla           | Tap rápido | Hold (>150ms)          |
 |-----------------|-------------|------------------------|
@@ -86,6 +131,7 @@ Estas teclas detectan si las presionas rápido (tap) o si las mantienes (hold). 
 
 ---
 
+
 ## 🔁 Comportamiento visual y OLED
 
 - Muestra el logo personalizado con `oled_render_logo`.
@@ -93,11 +139,12 @@ Estas teclas detectan si las presionas rápido (tap) o si las mantienes (hold). 
 
 ---
 
+
 ## 🧪 Compilación e instalación
 
 Para compilar y flashear esta configuración en tu teclado Corne:
 
-````sh
+```sh
 git clone https://github.com/afnarqui/corne.git
 cd corne
 rm -rf .build
@@ -107,12 +154,16 @@ qmk clean
 qmk compile -kb crkbd/rev1 -km default
 
 qmk flash -kb crkbd/rev1 -km default
-````
+```
+
+> Asegúrate de tener [QMK configurado correctamente](https://docs.qmk.fm/#/newbs) antes de comenzar.
+
+---
+
+¿Dudas, sugerencias o mejoras? ¡Son bienvenidas!
+
+
 
 ## 📌 Consideraciones finales
 
-Este archivo README sirve como guía para ti o cualquier persona que quiera entender y usar tu layout. Solo reemplaza la URL de la imagen superior por el enlace de AWS S3 una vez lo subas:
-
-```markdown
-![Visual de la configuración del teclado](https://s3.us-east-1.amazonaws.com/afnarqui.com/archivosnotions/corne.jpeg)
-
+Este archivo README sirve como guía para ti o cualquier persona que quiera entender y usar tu layout.
