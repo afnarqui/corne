@@ -137,8 +137,8 @@ Este sistema permite que el teclado cambie automáticamente de color RGB cuando 
 ## 🎯 Funcionalidad
 
 ### Colores por Capa
-- **Capa 0 (Base)**: 🔴 Rojo
-- **Capa 1 (Lower)**: 🔵 Azul  
+- **Capa 0 (Base)**: 🔵 Azul
+- **Capa 1 (Lower)**: 🔴 Rojo   
 - **Capa 2 (Raise)**: 🟢 Verde
 - **Capa 3 (Adjust)**: 🟣 Púrpura
 - **Capa 4 (Mouse)**: 🟠 Naranja
