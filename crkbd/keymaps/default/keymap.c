@@ -2,6 +2,16 @@
 #include "logo.h"
 #include "quantum.h"
 
+
+#ifdef RGB_MATRIX_ENABLE
+#include "rgb_matrix.h"
+#endif
+
+#ifdef RGBLIGHT_ENABLE
+#include "rgblight.h"
+#endif
+
+
 enum custom_keycodes {
     M_C_SMART_C = SAFE_RANGE,
     M_C_SMART_V,
@@ -68,8 +78,40 @@ uint16_t alt_tab_timer = 0;
 bool r_ctrl_shift_pressed = false;
 uint16_t r_ctrl_shift_timer = 0;
 
+// Variables para el cambio de color por capa
+uint8_t current_layer = 0;
+
+// Colores para cada capa (HSV: HUE, SAT, VAL)
+const HSV layer_colors[] = {
+    {HSV_BLUE},      // Capa 0: Azul 
+    {HSV_RED},     // Capa 1: Rojo
+    {HSV_GREEN},    // Capa 2: Verde
+    {HSV_PURPLE},   // Capa 3: Púrpura
+    {HSV_ORANGE},   // Capa 4: Naranja
+    {HSV_CYAN},     // Capa 5: Cian
+};
+
+// Función para cambiar el color según la capa activa
+void change_layer_color(uint8_t layer) {
+    if (layer < sizeof(layer_colors) / sizeof(layer_colors[0])) {
+#ifdef RGB_MATRIX_ENABLE
+        rgb_matrix_sethsv(layer_colors[layer].h, layer_colors[layer].s, layer_colors[layer].v);
+#endif
+#ifdef RGBLIGHT_ENABLE
+        rgblight_sethsv(layer_colors[layer].h, layer_colors[layer].s, layer_colors[layer].v);
+#endif
+    }
+}
+
 
 void matrix_scan_user(void) {
+ // Detectar cambios de capa y cambiar color
+    uint8_t active_layer = get_highest_layer(layer_state);
+    if (active_layer != current_layer) {
+        current_layer = active_layer;
+        change_layer_color(current_layer);
+    }
+    
     if (is_alt_tab_active && timer_elapsed(alt_tab_timer) > 1000) {
         unregister_code(KC_LALT);
         is_alt_tab_active = false;
