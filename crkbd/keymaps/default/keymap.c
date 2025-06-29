@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "logo.h"
 #include "quantum.h"
+#include <stdio.h>
 
 
 #ifdef RGB_MATRIX_ENABLE
@@ -25,6 +26,7 @@ enum custom_keycodes {
     M_N_TILDE,
     ALT_TAB,
     R_CTRL_SHIFT,
+    RESET_TIME,
 };
 
 // 🎹 Mis capas afn personalizadas
@@ -62,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [5] = LAYOUT_split_3x6_3(
     KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_LPRN, KC_RPRN,     KC_LT, KC_GT, KC_PIPE,KC_NO,KC_NO,KC_NO,
     KC_SLSH, KC_COLN, KC_EXLM, KC_DQUO, KC_COMM, KC_DOT,       LCTL(KC_TAB), LCTL(LSFT(KC_TAB)), LALT(KC_UP), LALT(KC_DOWN), LCTL(KC_P), KC_RCTL,
-    KC_NO, KC_QUES, KC_HASH, KC_DLR, KC_PERC,KC_NO,      KC_AMPR, KC_ASTR, KC_EQL, KC_MINS, KC_GRV, KC_NO,
+    KC_NO, KC_QUES, KC_HASH, KC_DLR, KC_PERC,KC_NO,      KC_AMPR, KC_ASTR, KC_EQL, KC_MINS, KC_GRV, RESET_TIME,
                                           KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS
 ),
 };
@@ -80,16 +82,41 @@ uint16_t r_ctrl_shift_timer = 0;
 
 // Variables para el cambio de color por capa
 uint8_t current_layer = 0;
+uint8_t previous_layer = 0; // Nueva variable para rastrear la capa anterior
+uint32_t last_time_update = 0; // Variable para controlar actualización de hora
+uint32_t time_offset = 0; // Variable para controlar el tiempo base
 
 // Colores para cada capa (HSV: HUE, SAT, VAL)
 const HSV layer_colors[] = {
-    {HSV_BLUE},      // Capa 0: Azul 
+    {HSV_BLUE},      // Capa 0: Azul
     {HSV_RED},     // Capa 1: Rojo
     {HSV_GREEN},    // Capa 2: Verde
     {HSV_PURPLE},   // Capa 3: Púrpura
     {HSV_ORANGE},   // Capa 4: Naranja
     {HSV_CYAN},     // Capa 5: Cian
 };
+
+// Declaración de función para obtener nombre de capa
+const char *get_layer_name(uint8_t layer);
+
+// Función para obtener la hora real del sistema
+void get_time_string(char* time_str) {
+    // Obtener hora real del sistema usando comunicación con el host
+    // Esta es una implementación básica que puede no funcionar en todos los casos
+
+    // Intentar obtener la hora del sistema
+    uint32_t system_time = timer_read32();
+
+    // Para obtener la hora real, necesitaríamos implementar comunicación con el host
+    // Por ahora, mostramos el tiempo transcurrido desde el inicio
+    uint32_t uptime = (system_time - time_offset) / 1000; // Segundos desde el reinicio
+
+    uint8_t hours = (uptime / 3600) % 24;
+    uint8_t minutes = (uptime / 60) % 60;
+    uint8_t seconds = uptime % 60;
+
+    snprintf(time_str, 9, "%02d:%02d:%02d", hours, minutes, seconds);
+}
 
 // Función para cambiar el color según la capa activa
 void change_layer_color(uint8_t layer) {
@@ -111,7 +138,7 @@ void matrix_scan_user(void) {
         current_layer = active_layer;
         change_layer_color(current_layer);
     }
-    
+
     if (is_alt_tab_active && timer_elapsed(alt_tab_timer) > 1000) {
         unregister_code(KC_LALT);
         is_alt_tab_active = false;
@@ -198,6 +225,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 r_ctrl_shift_pressed = false;
             }
             return false;
+
+        case RESET_TIME:
+            if (record->event.pressed) {
+                time_offset = timer_read32(); // Reiniciar el tiempo
+            }
+            return false;
     }
     return true;
 }
@@ -206,12 +239,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 // 🖼️ OLED
 bool oled_task_user(void) {
-    oled_render_logo();  // Muestra el logo
+    uint8_t active_layer = get_highest_layer(layer_state);
+    uint32_t current_time = timer_read32();
+
+    // Actualizar si la capa cambió o cada segundo para la hora
+    if (active_layer != previous_layer || (current_time - last_time_update) > 1000) {
+        oled_clear(); // Limpiar pantalla
+        oled_render_logo();  // Muestra el logo con la nueva capa
+        previous_layer = active_layer;
+        last_time_update = current_time;
+    }
+
     return false;
+}
+
+// Función para inicializar la pantalla OLED
+void keyboard_post_init_user(void) {
+    // Inicializar la pantalla OLED con rotación normal (funciona en ambos lados)
+    oled_init(OLED_ROTATION_0);
+    oled_clear();
+    oled_render_logo();
 }
 
 void oled_render_logo(void) {
     oled_write_raw_P(logo, logo_size);
+
+    // Línea 1: Capa
+    oled_set_cursor(10, 1);
+    uint8_t layer = get_highest_layer(layer_state);
+    oled_write_P(PSTR("C: "), false);
+    oled_write(get_layer_name(layer), false);
+
+    // Línea 2: Tiempo transcurrido
+    oled_set_cursor(10, 2);
+    char time_str[9];
+    get_time_string(time_str);
+    oled_write_P(PSTR("T: "), false);
+    oled_write(time_str, false);
+}
+
+const char *get_layer_name(uint8_t layer) {
+    switch (layer) {
+        case 0: return "Base";
+        case 1: return "Num";
+        case 2: return "Simbolos";
+        case 3: return "RGB";
+        case 4: return "Mouse";
+        case 5: return "Extra";
+        default: return "Desconocida";
+    }
 }
 
 
