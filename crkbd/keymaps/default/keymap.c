@@ -24,6 +24,7 @@ enum custom_keycodes {
     M_C_SMART_S,
     M_UNDERSCORE,
     M_N_TILDE,
+    M_ALT_164, // <--- Agregado para Alt+164
     ALT_TAB,
     R_CTRL_SHIFT,
     RESET_TIME,
@@ -39,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [1] = LAYOUT_split_3x6_3(
         ALT_TAB, KC_1, KC_2, KC_3, KC_4, KC_5,          KC_LALT, KC_PGUP, KC_UP, KC_PGDN, KC_NO, KC_BSPC,
-        LALT(KC_TAB), KC_P6, KC_P7, KC_P8, KC_P9, KC_P0,    KC_END, KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_LSFT), KC_RCTL,
+        LALT(KC_TAB), KC_6, KC_7, KC_8, KC_9, KC_0,    KC_END, KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_LSFT), KC_RCTL,
         KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,KC_F6,            KC_F7, KC_F8, KC_F9, KC_F10, KC_F11,KC_F12,
                                             KC_LGUI, KC_TRNS, KC_SPC, KC_ENT, KC_TRNS, KC_RALT
     ),
@@ -57,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     [4] = LAYOUT_split_3x6_3(
         KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO, KC_NO,      KC_NO,    KC_WH_L,    KC_MS_U,    KC_WH_R,    KC_NO,    KC_ACL0,
-        KC_NO,    KC_NO,    KC_NO, M_N_TILDE, KC_NO, KC_NO,      KC_NO,  KC_MS_L,  KC_MS_D,  KC_MS_R,  KC_NO,  KC_ACL1,
+        KC_NO,    KC_NO,    KC_NO, M_ALT_164, KC_NO, KC_NO,      KC_NO,  KC_MS_L,  KC_MS_D,  KC_MS_R,  KC_NO,  KC_ACL1,
         KC_NO,    KC_NO,    KC_NO, KC_NO, KC_NO,    KC_NO,     KC_LCTL, KC_WH_U,    KC_BTN3,    KC_WH_D,       KC_NO,    KC_ACL2,
                             KC_NO, KC_BTN1, KC_NO, KC_BTN1, KC_BTN2, KC_NO
     ),
@@ -158,6 +159,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case M_N_TILDE:
             send_string_with_delay_P(PSTR("ñ"), 0);
+            return false;
+        case M_ALT_164:
+            if (record->event.pressed) {
+                register_code(KC_LALT);
+                tap_code(KC_KP_1);
+                tap_code(KC_KP_6);
+                tap_code(KC_KP_4);
+                unregister_code(KC_LALT);
+            }
             return false;
 
         case M_C_SMART_C:
